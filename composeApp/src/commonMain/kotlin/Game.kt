@@ -14,8 +14,10 @@ data class GameState(
     val workers: List<GameWorker>,
     val availableJobs: List<GameJob> = listOf(
         // level, kosten, einkommen, dauer
-        GameJob(1, Level(1, 1.gelds, 1.gelds, 10.seconds))
-    ),
+        GameJob(1, Level(1, 1.gelds, 1.gelds, 5.seconds)),
+        GameJob(2, Level(1, 5.gelds, 10.gelds, 10.seconds))
+
+    )
 )
 
 @Serializable
@@ -47,6 +49,14 @@ data class Level(
 ) {
     fun upgradeEfficiency() = copy(
         level = level + 1,
-        earn = earn * 2,
+        earn = earn * 3,
+        cost = cost * 4,
     )
 }
+
+@Serializable
+data class ClickButtonLevel(
+    val level: Int,
+    @Serializable(with = GeldsSerializer::class)
+    val earn: Gelds,
+)

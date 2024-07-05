@@ -1,26 +1,12 @@
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.SpanStyle
@@ -29,6 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import idle_game.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import util.Gelds
 import util.toHumanReadableString
@@ -67,70 +55,92 @@ fun Screen() {
             }
 
             Column(
-                modifier = Modifier.fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .padding(
-                        horizontal = 100.dp,
-                    ),
-                horizontalAlignment = Alignment.End
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-
-            }
-
-
-            Column(
-                modifier = Modifier.fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-
-            ) {
-
-
-
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, fontSize = 48.sp, shadow = Shadow(color = Color.Gray, offset = Offset(2f, 2f), blurRadius = 4f))) {
-                            append("DRAGON ")
+                // Clicker Image in the center
+                Image(
+                    painter = painterResource(Res.drawable.zeni),
+                    contentDescription = "Clicker",
+                    modifier = Modifier
+                        .size(150.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .clickable {
+                            gameState?.let { state -> viewModel.clickMoney(state) }
                         }
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, fontSize = 48.sp, color = Color.Red, shadow = Shadow(color = Color.Gray, offset = Offset(2f, 2f), blurRadius = 4f))) {
-                            append("BALL")
-                        }
-                        append("\n")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, fontSize = 48.sp, shadow = Shadow(color = Color.Gray, offset = Offset(2f, 2f), blurRadius = 4f))) {
-                            append("UNIVERSE MASTER")
-                        }
-                    },
-                    style = MaterialTheme.typography.h1,
                 )
 
 
-                Spacer(modifier = Modifier.height(100.dp))
 
-
-
+                Spacer(modifier = Modifier.height(16.dp))
                 gameState?.let { state ->
                     Text(
                         "Bank: ${currentMoney?.toHumanReadableString()} Gelds",
                         style = MaterialTheme.typography.h4,
                     )
-                    Button(
-                        onClick = { viewModel.clickMoney(state) }
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        Text("Click To Sell Lemonade")
+                        state.availableJobs.forEach { availableJob ->
+                            Generator(
+                                gameJob = availableJob,
+                                alreadyBought = state.workers.any { it.jobId == availableJob.id },
+                                onBuy = { viewModel.addWorker(state, availableJob) },
+                                onUpgrade = { viewModel.upgradeJob(state, availableJob) }
+                            )
+                        }
                     }
+                }
 
-                    state.availableJobs.forEach { availableJob ->
-                        Generator(
-
-                            gameJob = availableJob,
-                            alreadyBought = state.workers.any { it.jobId == availableJob.id },
-                            onBuy = { viewModel.addWorker(state, availableJob) },
-                            onUpgrade = { viewModel.upgradeJob(state, availableJob) }
-                        )
-                    }
+                Button(
+                    modifier = Modifier.padding(18.dp),
+                    onClick = { viewModel.reset() },
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color(206, 177, 67),
+                        contentColor = Color.White
+                    ),
+                ) {
+                    Text("Reset Game")
                 }
             }
         }
     )
+}
+
+@Composable
+fun GradientButton(
+    text: String,
+    onClick: () -> Unit
+) {
+    val gradientColors = listOf(Color(0xFFB8860B), Color(0xFFDAA520))
+
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth(0.8f)
+            .height(60.dp)
+            .background(
+                brush = Brush.horizontalGradient(colors = gradientColors),
+                shape = RoundedCornerShape(12.dp)
+            ),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = Color.Transparent
+        ),
+        contentPadding = PaddingValues()
+    ) {
+        Text(
+            text = text,
+            color = Color.White,
+            style = MaterialTheme.typography.button,
+            fontWeight = FontWeight.Bold
+        )
+    }
 }
 
 @Composable
@@ -141,31 +151,41 @@ private fun Generator(
     onBuy: () -> Unit = {},
     onUpgrade: () -> Unit = {},
 ) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    Column(
         modifier = modifier
-            .padding(8.dp)
-            .background(Color.Red, RoundedCornerShape(8.dp))
-            .padding(8.dp)
+            .padding(20.dp)
     ) {
-        Column {
-            Text("Generator ${gameJob.id}")
-            Text("Level: ${gameJob.level.level}")
-            Text("Costs: ${gameJob.level.cost.toHumanReadableString()} Gelds")
-            Text("Earns: ${gameJob.level.earn.toHumanReadableString()} Gelds")
-            Text("Duration: ${gameJob.level.duration.inWholeSeconds} Seconds")
-        }
-
-        if (!alreadyBought) {
-            Button(onClick = onBuy) {
-                Text("Buy")
-
+        Row(
+            modifier = Modifier
+                .background(
+                    Brush.horizontalGradient(listOf(Color(0xFFB8860B), Color(0xFFDAA520))),
+                    RoundedCornerShape(8.dp)
+                )
+                .border(
+                    width = 6.dp,
+                    color = Color(115, 101, 41),
+                    shape = RoundedCornerShape(5.dp)
+                )
+                .padding(8.dp)
+        ) {
+            Column {
+                Text("GENERATOR 1")
+                Text("Level: ${gameJob.level.level}")
+                Text("Costs: ${gameJob.level.cost.toHumanReadableString()} Gelds")
+                Text("Earns: ${gameJob.level.earn.toHumanReadableString()} Gelds")
+                Text("Duration: ${gameJob.level.duration.inWholeSeconds} Seconds")
             }
-        } else {
-            Text("Bought")
-        }
-        Button(onClick = onUpgrade) {
-            Text("Upgrade")
+
+            if (!alreadyBought) {
+                Button(onClick = onBuy) {
+                    Text("Buy")
+                }
+            } else {
+                Text("Bought")
+            }
+            Button(onClick = onUpgrade) {
+                Text("Upgrade")
+            }
         }
     }
 }
