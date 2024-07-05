@@ -93,18 +93,25 @@ fun Screen() {
                         style = MaterialTheme.typography.h4
                     )
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        state.availableJobs.forEach { availableJob ->
-                            Generator(
-                                gameJob = availableJob,
-                                alreadyBought = state.workers.any { it.jobId == availableJob.id },
-                                onBuy = { viewModel.addWorker(state, availableJob) },
-                                onUpgrade = { viewModel.upgradeJob(state, availableJob) }
-                            )
+                        state.availableJobs.chunked(3).forEach { jobRow ->
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            ) {
+                                jobRow.forEach { availableJob ->
+                                    Generator(
+                                        gameJob = availableJob,
+                                        alreadyBought = state.workers.any { it.jobId == availableJob.id },
+                                        onBuy = { viewModel.addWorker(state, availableJob) },
+                                        onUpgrade = { viewModel.upgradeJob(state, availableJob) }
+                                    )
+                                }
+                            }
                         }
                     }
+
                 }
 
                 Button(
@@ -207,6 +214,7 @@ private fun Generator(
             ) {
                 Text("Upgrade", color = Color.White)
             }
+
         }
     }
 }
