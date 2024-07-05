@@ -9,6 +9,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -53,11 +54,18 @@ fun Screen() {
             val currentMoney: Gelds? by remember(gameState) {
                 derivedStateOf { gameState?.stashedMoney }
             }
+            Image(
+                painterResource(Res.drawable.db),
+                contentScale = ContentScale.Crop,
+                contentDescription = "A square",
+                modifier = Modifier.fillMaxWidth().fillMaxHeight()
+
+            )
+
 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White)
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -80,8 +88,9 @@ fun Screen() {
                 Spacer(modifier = Modifier.height(16.dp))
                 gameState?.let { state ->
                     Text(
-                        "Bank: ${currentMoney?.toHumanReadableString()} Gelds",
-                        style = MaterialTheme.typography.h4,
+                        "${currentMoney?.toHumanReadableString()} Zeni",
+                        color = Color(206, 177, 67),
+                        style = MaterialTheme.typography.h4
                     )
 
                     Row(
@@ -151,14 +160,14 @@ private fun Generator(
     onBuy: () -> Unit = {},
     onUpgrade: () -> Unit = {},
 ) {
-    Column(
+    Row(
         modifier = modifier
             .padding(20.dp)
     ) {
         Row(
             modifier = Modifier
                 .background(
-                    Brush.horizontalGradient(listOf(Color(0xFFB8860B), Color(0xFFDAA520))),
+                    Brush.horizontalGradient(listOf(Color(111, 97, 40), Color(211, 180, 69))),
                     RoundedCornerShape(8.dp)
                 )
                 .border(
@@ -169,22 +178,34 @@ private fun Generator(
                 .padding(8.dp)
         ) {
             Column {
-                Text("GENERATOR 1")
-                Text("Level: ${gameJob.level.level}")
-                Text("Costs: ${gameJob.level.cost.toHumanReadableString()} Gelds")
-                Text("Earns: ${gameJob.level.earn.toHumanReadableString()} Gelds")
-                Text("Duration: ${gameJob.level.duration.inWholeSeconds} Seconds")
+                Text("GENERATOR", color = Color.White)
+                Text("Level: ${gameJob.level.level}Level", color = Color.White)
+                Text("Costs: ${gameJob.level.cost.toHumanReadableString()} Gelds", color = Color.White)
+                Text("Earns: ${gameJob.level.earn.toHumanReadableString()} Gelds", color = Color.White)
+                Text("Duration: ${gameJob.level.duration.inWholeSeconds} Seconds", color = Color.White)
             }
 
             if (!alreadyBought) {
-                Button(onClick = onBuy) {
-                    Text("Buy")
+                Button(
+                    onClick = onBuy,
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(208, 178, 68)),
+                    border = BorderStroke(2.dp, Color(110, 96, 40)),  // Hier fügen Sie die schwarze Umrandung hinzu
+                    shape = RoundedCornerShape(8.dp), // Optional: abgerundete Ecken
+                    modifier = Modifier.padding(16.dp) // Optional: Abstand um den Button herum
+                ) {
+                    Text("Buy", color = Color.White)
                 }
             } else {
-                Text("Bought")
+                Text("Bought", color = Color.White)
             }
-            Button(onClick = onUpgrade) {
-                Text("Upgrade")
+            Button(
+                onClick = onUpgrade,
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(208, 178, 68)),
+                border = BorderStroke(2.dp, Color(110, 96, 40)),  // Hier fügen Sie die schwarze Umrandung hinzu
+                shape = RoundedCornerShape(8.dp), // Optional: abgerundete Ecken
+                modifier = Modifier.padding(16.dp) // Optional: Abstand um den Button herum
+            ) {
+                Text("Upgrade", color = Color.White)
             }
         }
     }
