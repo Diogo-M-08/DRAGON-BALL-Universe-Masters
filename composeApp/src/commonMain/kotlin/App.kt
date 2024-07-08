@@ -187,8 +187,8 @@ private fun Generator(
             Column {
                 Text("GENERATOR", color = Color.White)
                 Text("Level: ${gameJob.level.level}Level", color = Color.White)
-                Text("Costs: ${gameJob.level.cost.toHumanReadableString()} Gelds", color = Color.White)
-                Text("Earns: ${gameJob.level.earn.toHumanReadableString()} Gelds", color = Color.White)
+                Text("Costs: ${gameJob.level.cost.toHumanReadableString()} Zeni", color = Color.White)
+                Text("Earns: ${gameJob.level.earn.toHumanReadableString()} Zeni", color = Color.White)
                 Text("Duration: ${gameJob.level.duration.inWholeSeconds} Seconds", color = Color.White)
             }
 
