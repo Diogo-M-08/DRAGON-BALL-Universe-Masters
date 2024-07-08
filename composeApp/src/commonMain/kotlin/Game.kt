@@ -19,7 +19,7 @@ data class GameState(
         GameJob(3, Level(1, 8100.gelds, 1800.gelds, 10.seconds)),
         GameJob(4, Level(1, 900000.gelds, 3000.gelds, 15.seconds)),
         GameJob(5, Level(1, 2000000.gelds, 9000.gelds, 20.seconds)),
-        GameJob(6, Level(1, 40000000.gelds, 1000000.gelds, 30.seconds))
+        GameJob(6, Level(1, 50000000.gelds, 1000000.gelds, 30.seconds))
 
 
     )
