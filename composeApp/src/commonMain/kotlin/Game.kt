@@ -15,11 +15,11 @@ data class GameState(
     val availableJobs: List<GameJob> = listOf(
         // level, kosten, einkommen, dauer
         GameJob(1, Level(1, 50.gelds, 5.gelds, 2.seconds)),
-        GameJob(2, Level(1, 300.gelds, 10.gelds, 3.seconds)),
-        GameJob(3, Level(1, 2000.gelds, 150.gelds, 10.seconds)),
-        GameJob(4, Level(1, 10000.gelds, 800.gelds, 15.seconds)),
-        GameJob(5, Level(1, 100000.gelds, 1000.gelds, 20.seconds)),
-        GameJob(6, Level(1, 500000.gelds, 250000.gelds, 30.seconds))
+        GameJob(2, Level(1, 300.gelds, 15.gelds, 3.seconds)),
+        GameJob(3, Level(1, 2000.gelds, 200.gelds, 5.seconds)),
+        GameJob(4, Level(1, 10000.gelds, 1500.gelds, 5.seconds)),
+        GameJob(5, Level(1, 100000.gelds, 4000.gelds, 10.seconds)),
+        GameJob(6, Level(1, 500000.gelds, 250000.gelds, 15.seconds))
 
 
     )
